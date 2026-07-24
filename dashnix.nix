@@ -118,16 +118,17 @@ let
             :root {
                 --accent: #${accentColor};
                 --bg: #${bgColor};
+                --card-bg: #${cardColor};
                 --text: #${textColor};
 
-                --card: rgba(255,255,255,0.06);
-                --glass-border: rgba(255,255,255,0.08);
+                --glass-border: rgba(255, 255, 255, 0.12);
+                --hover-border: #${accentColor};
 
                 --shadow:
-                    0 10px 30px rgba(0,0,0,0.35),
-                    0 2px 8px rgba(0,0,0,0.25);
+                    0 10px 30px rgba(0, 0, 0, 0.4),
+                    0 2px 8px rgba(0, 0, 0, 0.3);
 
-                --radius: 28px;
+                --radius: 24px;
             }
 
             * {
@@ -137,9 +138,9 @@ let
             html {
                 min-height: 100%;
                 background:
-                    radial-gradient(circle at top left, #${accentColor}22 0%, transparent 30%),
-                    radial-gradient(circle at bottom right, #ffffff10 0%, transparent 25%),
-                    linear-gradient(180deg, #${bgColor} 0%, #000 140%);
+                    radial-gradient(circle at 15% 15%, #${accentColor}33 0%, transparent 40%),
+                    radial-gradient(circle at 85% 85%, #${accentColor}15 0%, transparent 45%),
+                    linear-gradient(180deg, #${bgColor} 0%, #000 130%);
                 background-attachment: fixed;
             }
 
@@ -147,16 +148,10 @@ let
                 margin: 0;
                 min-height: 100vh;
 
-                font-family:
-                    Inter,
-                    ui-sans-serif,
-                    system-ui,
-                    sans-serif;
-
+                font-family: Inter, ui-sans-serif, system-ui, sans-serif;
                 color: var(--text);
 
                 padding: 4rem 2rem;
-
                 overflow-x: hidden;
                 position: relative;
             }
@@ -166,14 +161,13 @@ let
                 content: "";
                 position: fixed;
 
-                width: 40rem;
-                height: 40rem;
+                width: 45rem;
+                height: 45rem;
 
                 border-radius: 999px;
+                filter: blur(120px);
 
-                filter: blur(100px);
-
-                opacity: 0.12;
+                opacity: 0.22;
 
                 pointer-events: none;
                 z-index: 0;
@@ -181,14 +175,14 @@ let
 
             body::before {
                 background: #${accentColor};
-                top: -10rem;
-                left: -10rem;
+                top: -12rem;
+                left: -12rem;
             }
 
             body::after {
-                background: #ffffff;
-                bottom: -20rem;
-                right: -10rem;
+                background: #${accentColor};
+                bottom: -22rem;
+                right: -12rem;
             }
 
             .container {
@@ -201,22 +195,21 @@ let
             header {
                 display: flex;
                 align-items: center;
-                gap: 1rem;
-                margin-bottom: 3rem;
+                gap: 1.25rem;
+                margin-bottom: 3.5rem;
             }
 
             .logo {
-                width: 56px;
-                height: 56px;
+                width: 58px;
+                height: 58px;
 
                 border-radius: 18px;
 
-                background:
-                    linear-gradient(
-                        145deg,
-                        rgba(255,255,255,0.14),
-                        rgba(255,255,255,0.04)
-                    );
+                background: linear-gradient(
+                    145deg,
+                    rgba(255, 255, 255, 0.15),
+                    rgba(255, 255, 255, 0.03)
+                );
 
                 border: 1px solid var(--glass-border);
 
@@ -225,7 +218,6 @@ let
                 justify-content: center;
 
                 backdrop-filter: blur(20px);
-
                 box-shadow: var(--shadow);
             }
 
@@ -236,12 +228,16 @@ let
                 font-weight: 800;
 
                 letter-spacing: -0.04em;
+                background: linear-gradient(135deg, var(--text) 60%, var(--accent));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
             }
 
             .subtitle {
-                opacity: 0.7;
+                opacity: 0.85;
                 margin-top: 0.35rem;
                 font-size: 0.95rem;
+                letter-spacing: 0.02em;
             }
 
             .grid {
@@ -252,17 +248,14 @@ let
 
             .card {
                 position: relative;
-
                 padding: 1.5rem;
-
                 border-radius: var(--radius);
 
-                background:
-                    linear-gradient(
-                        180deg,
-                        rgba(255,255,255,0.10),
-                        rgba(255,255,255,0.04)
-                    );
+                background: linear-gradient(
+                    165deg,
+                    rgba(255, 255, 255, 0.09) 0%,
+                    rgba(255, 255, 255, 0.02) 100%
+                ), var(--card-bg);
 
                 border: 1px solid var(--glass-border);
 
@@ -270,14 +263,12 @@ let
 
                 text-decoration: none;
                 color: inherit;
-
                 overflow: hidden;
 
                 transition:
-                    transform 0.25s ease,
+                    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
                     border-color 0.25s ease,
-                    box-shadow 0.25s ease,
-                    background 0.25s ease;
+                    box-shadow 0.25s ease;
 
                 box-shadow: var(--shadow);
 
@@ -288,34 +279,39 @@ let
                 justify-content: space-between;
             }
 
+            /* Mouse-following hover glow border overlay */
             .card::before {
                 content: "";
-
                 position: absolute;
                 inset: 0;
-
-                background:
-                    linear-gradient(
-                        135deg,
-                        rgba(255,255,255,0.15),
-                        transparent 40%
-                    );
-
-                opacity: 0.7;
-
+                border-radius: inherit;
+                padding: 1px; /* Border thickness */
+                background: radial-gradient(
+                    250px circle at var(--hover-x, 50%) var(--hover-y, 50%),
+                    var(--hover-border),
+                    transparent 80%
+                );
+                -webkit-mask: 
+                    linear-gradient(#fff 0 0) content-box, 
+                    linear-gradient(#fff 0 0);
+                -webkit-mask-composite: xor;
+                mask-composite: exclude;
+                opacity: 0;
+                transition: opacity 0.3s ease;
                 pointer-events: none;
             }
 
-            .card:hover:not(.disabled) {
-                transform:
-                    translateY(-8px)
-                    scale(1.02);
+            .card:hover:not(.disabled)::before {
+                opacity: 1;
+            }
 
-                border-color: #${accentColor}88;
+            .card:hover:not(.disabled) {
+                transform: translateY(-6px) scale(1.015);
+                border-color: transparent;
 
                 box-shadow:
-                    0 25px 40px rgba(0,0,0,0.45),
-                    0 0 25px #${accentColor}22;
+                    0 20px 35px rgba(0, 0, 0, 0.5),
+                    0 0 25px #${accentColor}33;
             }
 
             .card:active:not(.disabled) {
@@ -338,32 +334,25 @@ let
                 height: 12px;
 
                 border-radius: 999px;
-
                 background: #6b7280;
-
-                border: 2px solid rgba(255,255,255,0.15);
+                border: 2px solid rgba(255, 255, 255, 0.15);
 
                 z-index: 2;
             }
 
             .card.online .status-badge {
                 background: #22c55e;
-
                 box-shadow:
-                    0 0 0 4px rgba(34,197,94,0.15),
-                    0 0 12px #22c55e;
+                    0 0 0 4px rgba(34, 197, 94, 0.2),
+                    0 0 14px #22c55e;
             }
 
             .card.online .status-badge::after {
                 content: "";
-
                 position: absolute;
                 inset: -4px;
-
                 border-radius: inherit;
-
-                border: 2px solid rgba(34,197,94,0.4);
-
+                border: 2px solid rgba(34, 197, 94, 0.5);
                 animation: ping 2s infinite;
             }
 
@@ -376,7 +365,6 @@ let
                     opacity: 1;
                     transform: scale(0.8);
                 }
-
                 to {
                     opacity: 0;
                     transform: scale(1.8);
@@ -384,21 +372,17 @@ let
             }
 
             .icon-wrapper {
-                /* Reduced size from 82px */
                 width: 52px;
                 height: 52px;
-
-                /* Adjusted radius for a smaller container */
                 border-radius: 16px;
 
-                background:
-                    linear-gradient(
-                        145deg,
-                        rgba(255,255,255,0.16),
-                        rgba(255,255,255,0.05)
-                    );
+                background: linear-gradient(
+                    145deg,
+                    rgba(255, 255, 255, 0.18),
+                    rgba(255, 255, 255, 0.04)
+                );
 
-                border: 1px solid rgba(255,255,255,0.12);
+                border: 1px solid rgba(255, 255, 255, 0.15);
 
                 display: flex;
                 align-items: center;
@@ -407,8 +391,8 @@ let
                 backdrop-filter: blur(16px);
 
                 box-shadow:
-                    inset 0 1px 1px rgba(255,255,255,0.18),
-                    0 6px 12px rgba(0,0,0,0.2); /* Slightly softer shadow */
+                    inset 0 1px 1px rgba(255, 255, 255, 0.25),
+                    0 6px 14px rgba(0, 0, 0, 0.25);
 
                 position: relative;
                 overflow: hidden;
@@ -416,28 +400,22 @@ let
 
             .icon-wrapper::before {
                 content: "";
-
                 position: absolute;
-
                 top: -40%;
                 left: -20%;
-
                 width: 140%;
                 height: 70%;
 
-                background:
-                    linear-gradient(
-                        to bottom,
-                        rgba(255,255,255,0.22),
-                        transparent
-                    );
+                background: linear-gradient(
+                    to bottom,
+                    rgba(255, 255, 255, 0.25),
+                    transparent
+                );
 
                 transform: rotate(-8deg);
             }
 
             .icon {
-                /* Reduced icon size from 48px to 28px */
-                /* Smaller icons hide low-res artifacts better */
                 width: 28px;
                 height: 28px;
 
@@ -445,8 +423,7 @@ let
                 position: relative;
                 z-index: 1;
 
-                filter:
-                    drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+                filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
             }
 
             .card-content {
@@ -457,8 +434,7 @@ let
 
             h3 {
                 margin: 0;
-
-                font-size: 1.1rem;
+                font-size: 1.15rem;
                 font-weight: 700;
 
                 text-transform: capitalize;
@@ -466,8 +442,8 @@ let
             }
 
             .card-subtitle {
-                font-size: 0.9rem;
-                opacity: 0.6;
+                font-size: 0.88rem;
+                opacity: 0.7;
             }
 
             @media (max-width: 640px) {
@@ -599,6 +575,14 @@ let
                         </svg>
                     `;
                 }
+            });
+
+            document.querySelectorAll('.card').forEach(card => {
+                card.addEventListener('mousemove', e => {
+                    const rect = card.getBoundingClientRect();
+                    card.style.setProperty('--hover-x', `${e.clientX - rect.left}px`);
+                    card.style.setProperty('--hover-y', `${e.clientY - rect.top}px`);
+                });
             });
         </script>
     </body>
