@@ -580,8 +580,8 @@ let
             document.querySelectorAll('.card').forEach(card => {
                 card.addEventListener('mousemove', e => {
                     const rect = card.getBoundingClientRect();
-                    card.style.setProperty('--hover-x', `${e.clientX - rect.left}px`);
-                    card.style.setProperty('--hover-y', `${e.clientY - rect.top}px`);
+                    card.style.setProperty('--hover-x', `''${e.clientX - rect.left}px`);
+                    card.style.setProperty('--hover-y', `''${e.clientY - rect.top}px`);
                 });
             });
         </script>
