@@ -22,7 +22,6 @@
     {
       formatter = forAllSystems (pkgs:
         ((treefmt-nix.lib.evalModule pkgs) {
-          programs.prettier.enable = true;
           programs.nixpkgs-fmt.enable = true;
         }).config.build.wrapper
       );
