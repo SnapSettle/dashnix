@@ -133,6 +133,10 @@ let
 
             * {
                 box-sizing: border-box;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                shape-rendering: geometricPrecision;
+                text-rendering: optimizeLegibility;
             }
 
             html {
@@ -260,10 +264,17 @@ let
                 border: 1px solid var(--glass-border);
 
                 backdrop-filter: blur(22px);
+                -webkit-backdrop-filter: blur(22px);
 
                 text-decoration: none;
                 color: inherit;
                 overflow: hidden;
+
+                /* Prevent border pixelation during hover/transforms */
+                backface-visibility: hidden;
+                -webkit-backface-visibility: hidden;
+                transform: translateZ(0);
+                background-clip: padding-box;
 
                 transition:
                     transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
@@ -468,7 +479,7 @@ let
 
             <header>
                 <div class="logo">
-                    <svg width="30" height="30" viewBox="0 0 100 100">
+                    <svg width="30" height="30" viewBox="0 0 100 100" shape-rendering="geometricPrecision">
                         <circle
                             cx="50"
                             cy="50"
