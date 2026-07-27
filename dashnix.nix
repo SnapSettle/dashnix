@@ -104,8 +104,7 @@ let
   activeServices = filter (x: x != null) (map getService cfg.watchedServices);
   jsonServices = builtins.toJSON activeServices;
 
-  indexHtml = pkgs.substituteAll {
-    src = ./index.html;
+  indexHtml = pkgs.replaceVars ./index.html {
     servicesJson = jsonServices;
     accentColor = accentColor;
     bgColor = bgColor;
