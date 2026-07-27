@@ -12,13 +12,13 @@
 
     <style>
       :root {
-        --accent: #@accentColor@;
-        --bg: #@bgColor@;
-        --card-bg: #@cardColor@;
-        --text: #@textColor@;
+        --accent: #@accentColor @;
+        --bg: #@bgColor @;
+        --card-bg: #@cardColor @;
+        --text: #@textColor @;
 
-        --glass-border: rgba(255, 255, 255, 0.12);
-        --hover-border: #@accentColor@;
+        --glass-border: rgba(255, 255, 255, 0.35);
+        --hover-border: #@accentColor @;
 
         --shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.3);
 
@@ -39,15 +39,15 @@
         background:
           radial-gradient(
             circle at 15% 15%,
-            #@accentColor@33 0%,
+            #@accentColor @33 0%,
             transparent 40%
           ),
           radial-gradient(
             circle at 85% 85%,
-            #@accentColor@15 0%,
+            #@accentColor @15 0%,
             transparent 45%
           ),
-          linear-gradient(180deg, #@bgColor@ 0%, #000 130%);
+          linear-gradient(180deg, #@bgColor @0%, #000 130%);
         background-attachment: fixed;
       }
 
@@ -81,13 +81,13 @@
       }
 
       body::before {
-        background: #@accentColor@;
+        background: #@accentColor @;
         top: -12rem;
         left: -12rem;
       }
 
       body::after {
-        background: #@accentColor@;
+        background: #@accentColor @;
         bottom: -22rem;
         right: -12rem;
       }
@@ -166,7 +166,7 @@
           ),
           var(--card-bg);
 
-        border: 1px solid var(--glass-border);
+        border: 2px solid var(--glass-border);
 
         backdrop-filter: blur(22px);
         -webkit-backdrop-filter: blur(22px);
@@ -201,7 +201,7 @@
         position: absolute;
         inset: 0;
         border-radius: inherit;
-        padding: 1px;
+        padding: 2px;
         /* Border thickness */
         background: radial-gradient(
           250px circle at var(--hover-x, 50%) var(--hover-y, 50%),
@@ -228,7 +228,7 @@
 
         box-shadow:
           0 20px 35px rgba(0, 0, 0, 0.5),
-          0 0 25px #@accentColor@33;
+          0 0 25px #@accentColor @33;
       }
 
       .card:active:not(.disabled) {
@@ -300,7 +300,7 @@
           rgba(255, 255, 255, 0.04)
         );
 
-        border: 1px solid rgba(255, 255, 255, 0.15);
+        border: 1.5px solid var(--glass-border);
 
         display: flex;
         align-items: center;
@@ -427,82 +427,106 @@
     </div>
 
     <script>
-      const services = @servicesJson@;
+      const services = @servicesJson @;
       const grid = document.getElementById('grid');
       const host = window.location.hostname;
 
+      // Render initial cards once
       services.forEach(s => {
-          const url = `http://${host}:${s.port}`;
+        const url = `http://${host}:${s.port}`;
 
-          const card = document.createElement('a');
+        const card = document.createElement('a');
+        card.className = 'card';
+        card.id = `card-${s.name}`;
+        card.href = url;
 
-          card.className = 'card';
-          card.href = url;
+        card.innerHTML = `
+                <div class="status-badge"></div>
+                <div class="icon-wrapper" id="icon-wrapper-${s.name}">
+                    <img
+                        class="icon"
+                        src="${url}${s.favicon}"
+                        alt="${s.name} favicon"
+                        id="img-${s.name}"
+                    >
+                </div>
 
-          card.innerHTML = `
-                  <div class="status-badge"></div>
+                <div class="card-content">
+                    <h3>${s.name}</h3>
 
-                  <div class="icon-wrapper">
-                      <img
-                          class="icon"
-                          src="${url}${s.favicon}"
-                          alt="${s.name} favicon"
-                          id="img-${s.name}"
-                      >
-                  </div>
+                    <div class="card-subtitle">
+                        localhost:${s.port}
+                    </div>
+                </div>
+            `;
 
-                  <div class="card-content">
-                      <h3>${s.name}</h3>
+        grid.appendChild(card);
 
-                      <div class="card-subtitle">
-                          localhost:${s.port}
-                      </div>
-                  </div>
-              `;
-
-          grid.appendChild(card);
-
-          const img = document.getElementById(`img-${s.name}`);
-
-          img.onload = () => {
-              card.classList.add('online');
-          };
-
-          img.onerror = () => {
-              handleOffline(card, img);
-          };
-
-          function handleOffline(c, i) {
-              c.classList.add('disabled', 'offline');
-              c.onclick = (e) => e.preventDefault();
-              i.style.display = 'none';
-
-              i.parentElement.innerHTML = `
-                      <svg
-                          width="24"  /* Reduced from 34 */
-                          height="24" /* Reduced from 34 */
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          opacity="0.7"
-                      >
-                          <path d="M18 6L6 18"/>
-                          <path d="M6 6l12 12"/>
-                      </svg>
-                  `;
-          }
+        card.addEventListener('mousemove', e => {
+          const rect = card.getBoundingClientRect();
+          card.style.setProperty('--hover-x', `${e.clientX - rect.left}px`);
+          card.style.setProperty('--hover-y', `${e.clientY - rect.top}px`);
+        });
       });
 
-      document.querySelectorAll('.card').forEach(card => {
-          card.addEventListener('mousemove', e => {
-              const rect = card.getBoundingClientRect();
-              card.style.setProperty('--hover-x', `${e.clientX - rect.left}px`);
-              card.style.setProperty('--hover-y', `${e.clientY - rect.top}px`);
-          });
-      });
+      function checkServiceStatus(s) {
+        const url = `http://${host}:${s.port}`;
+        const card = document.getElementById(`card-${s.name}`);
+        const wrapper = document.getElementById(`icon-wrapper-${s.name}`);
+
+        const pingImg = new Image();
+        const timestamp = Date.now(); // Avoid browser image caching
+        pingImg.src = `${url}${s.favicon}?_=${timestamp}`;
+
+        pingImg.onload = () => {
+          // Service is Online -> Restore card
+          card.classList.remove('disabled', 'offline');
+          card.classList.add('online');
+          card.onclick = null; // Re-enable click navigation
+
+          wrapper.innerHTML = `
+                    <img
+                        class="icon"
+                        src="${url}${s.favicon}"
+                        alt="${s.name} favicon"
+                    >
+                `;
+        };
+
+        pingImg.onerror = () => {
+          // Service is Offline -> Disable card
+          card.classList.remove('online');
+          card.classList.add('disabled', 'offline');
+          card.onclick = (e) => e.preventDefault();
+
+          wrapper.innerHTML = `
+                    <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        opacity="0.7"
+                    >
+                        <path d="M18 6L6 18"/>
+                        <path d="M6 6l12 12"/>
+                    </svg>
+                `;
+        };
+      }
+
+      function pollAllServices() {
+        services.forEach(checkServiceStatus);
+      }
+
+      // Initial check
+      pollAllServices();
+
+      // Poll every 10 seconds
+      setInterval(pollAllServices, 10000);
     </script>
   </body>
 </html>
