@@ -11,17 +11,18 @@ No more manual bookmarking or hardcoding links—if it's enabled in your NixOS c
 
 ## ✨ Features
 
-*   **🔍 Zero-Hardcode Discovery**: Scans `config.services` and `options.services` to find active ports (supporting `.port`, `.settings.port`, `.listenPort`, and more).
-*   **🛠 Customizable Watchlist**: Define exactly which services to monitor via the `watchedServices` option.
-*   **🖼 Intelligent Icons**: Automatically fetches `favicon.ico` from services. Includes specific fallback logic for apps like **Bazarr** that hide icons in non-standard paths.
-*   **🛡 Firewall Integration**: Built-in `openFirewall` toggle to handle access automatically.
-*   **🎨 Modern UI**: A responsive, dark-themed grid layout that looks great on desktop and mobile.
+- **🔍 Zero-Hardcode Discovery**: Scans `config.services` and `options.services` to find active ports (supporting `.port`, `.settings.port`, `.listenPort`, and more).
+- **🛠 Customizable Watchlist**: Define exactly which services to monitor via the `watchedServices` option.
+- **🖼 Intelligent Icons**: Automatically fetches `favicon.ico` from services. Includes specific fallback logic for apps like **Bazarr** that hide icons in non-standard paths.
+- **🛡 Firewall Integration**: Built-in `openFirewall` toggle to handle access automatically.
+- **🎨 Modern UI**: A responsive, dark-themed grid layout that looks great on desktop and mobile.
 
 ---
 
 ## 📦 Installation
 
 ### Option A: Using Flakes (Recommended)
+
 Add Dashnix to your `flake.nix` as a source input:
 
 ```nix
@@ -63,6 +64,7 @@ OR
 ```
 
 ### Option B: Without Flakes (Traditional NixOS)
+
 You can import the module directly from GitHub using `fetchTarball` in your `configuration.nix`:
 
 ```nix
@@ -108,16 +110,20 @@ services.dashnix = {
 ## 🧠 How it Works
 
 ### 1. The Scavenger Logic
+
 NixOS modules often store ports in different places. Dashnix intelligently probes the following paths for every service in your `watchedServices` list:
-*   Standard: `services.<name>.port`
-*   Submodules: `services.<name>.settings.port`
-*   Arr-Suite: `services.<name>.settings.server.port`
-*   Legacy/Specific: `portNumber` or `listenPort`
+
+- Standard: `services.<name>.port`
+- Submodules: `services.<name>.settings.port`
+- Arr-Suite: `services.<name>.settings.server.port`
+- Legacy/Specific: `portNumber` or `listenPort`
 
 ### 2. Static Site Generation
+
 Dashnix uses `pkgs.writeText` to generate a static HTML/JavaScript dashboard at build time. This means the dashboard itself is incredibly fast and has zero runtime dependencies other than Nginx.
 
 ### 3. Client-Side Asset Discovery
+
 Because some apps return a 404 or a redirect when hitting `/favicon.ico`, the dashboard includes a JavaScript fallback loop. It attempts to locate the icon across several common directory structures (e.g., `/static/images/`) before falling back to a clean placeholder icon.
 
 ---
@@ -128,8 +134,9 @@ If you have a service that uses a non-standard NixOS module where the port is no
 
 ```nix
 # Example: If a module uses an 'extraConfig' string instead of a port option
-services.my-custom-app.port = 9000; 
+services.my-custom-app.port = 9000;
 ```
 
 ---
-*Built with ❄️ for the NixOS community.*
+
+_Built with ❄️ for the NixOS community._
