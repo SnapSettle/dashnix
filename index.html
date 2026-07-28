@@ -111,8 +111,6 @@
           rgba(255, 255, 255, 0.15),
           rgba(255, 255, 255, 0.03));
 
-      border: 1px solid var(--glass-border);
-
       display: flex;
       align-items: center;
       justify-content: center;
@@ -155,8 +153,6 @@
           rgba(255, 255, 255, 0.02) 100%),
         var(--card-bg);
 
-      border: 2px solid var(--glass-border);
-
       backdrop-filter: blur(22px);
       -webkit-backdrop-filter: blur(22px);
 
@@ -189,18 +185,18 @@
       position: absolute;
       inset: 0;
       border-radius: inherit;
-      padding: 3px;
-      /* Border thickness increased to 3px */
-      background: radial-gradient(350px circle at var(--hover-x, 50%) var(--hover-y, 50%),
-          var(--hover-border),
-          transparent 70%);
+      padding: 2px;
+      background: radial-gradient(400px circle at var(--hover-x, 50%) var(--hover-y, 50%),
+          var(--hover-border) 0%,
+          rgba(255, 255, 255, 0.2) 40%,
+          transparent 75%);
       -webkit-mask:
         linear-gradient(#fff 0 0) content-box,
         linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor;
       mask-composite: exclude;
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.2s ease;
       pointer-events: none;
     }
 
@@ -210,11 +206,10 @@
 
     .card:hover:not(.disabled) {
       transform: translateY(-6px) scale(1.015);
-      border-color: transparent;
 
       box-shadow:
         0 20px 35px rgba(0, 0, 0, 0.5),
-        0 0 35px #@accentColor@80;
+        0 0 25px #@accentColor@66;
     }
 
     .card:active:not(.disabled) {
@@ -283,8 +278,6 @@
       background: linear-gradient(145deg,
           rgba(255, 255, 255, 0.18),
           rgba(255, 255, 255, 0.04));
-
-      border: 1.5px solid var(--glass-border);
 
       display: flex;
       align-items: center;
@@ -388,7 +381,7 @@
   </div>
 
   <script>
-    const services = @servicesJson@;
+    const services = @servicesJson @;
     const grid = document.getElementById('grid');
     const host = window.location.hostname;
 
