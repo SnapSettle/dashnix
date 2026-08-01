@@ -4,7 +4,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashnix</title>
+  <title>Dashboard</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" href="fonts/PlusJakartaSans-VariableFont_wght.ttf" as="font" crossorigin>
 
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22none%22 stroke=%22%23@accentColor@%22 stroke-width=%225%22/><path d=%22M50 20 L50 35 M80 50 L65 50 M50 80 L50 65 M20 50 L35 50%22 stroke=%22%23@accentColor@%22 stroke-width=%226%22 stroke-linecap=%22round%22/><path d=%22M50 50 L75 30%22 stroke=%22%23@textColor@%22 stroke-width=%228%22 stroke-linecap=%22round%22/></svg>" />
@@ -16,12 +20,16 @@
       --card-bg: #@cardColor@;
       --text: #@textColor@;
 
-      --glass-border: rgba(255, 255, 255, 0.35);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --glass-surface: rgba(255, 255, 255, 0.04);
       --hover-border: #@accentColor@;
 
-      --shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.3);
+      --shadow-sm: 0 4px 20px -2px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 20px 40px -15px rgba(0, 0, 0, 0.6), 0 0 30px #@accentColor@25;
 
-      --radius: 24px;
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
     }
 
     * {
@@ -34,169 +42,226 @@
 
     html {
       min-height: 100%;
-
-      background:
-        radial-gradient(circle at 15% 15%,
-          #@accentColor@33 0%,
-          transparent 40%),
-        radial-gradient(circle at 85% 85%,
-          #@accentColor@15 0%,
-          transparent 45%),
-        linear-gradient(180deg, #@bgColor@ 0%, #000 130%);
+      background-color: var(--bg);
+      background-image: 
+        radial-gradient(circle at 10% 10%, #@accentColor@20 0%, transparent 45%),
+        radial-gradient(circle at 90% 85%, #@accentColor@12 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.85) 100%);
       background-attachment: fixed;
     }
 
     body {
       margin: 0;
       min-height: 100vh;
-
-      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
       color: var(--text);
-
-      padding: 4rem 2rem;
+      padding: 3.5rem 2rem;
       overflow-x: hidden;
       position: relative;
     }
 
+    /* Animated Ambient Lights */
     body::before,
     body::after {
       content: "";
       position: fixed;
-
-      width: 45rem;
-      height: 45rem;
-
-      border-radius: 999px;
-      filter: blur(120px);
-
-      opacity: 0.22;
-
+      width: 40rem;
+      height: 40rem;
+      border-radius: 50%;
+      filter: blur(140px);
+      opacity: 0.28;
       pointer-events: none;
       z-index: 0;
+      animation: float 18s ease-in-out infinite alternate;
     }
 
     body::before {
       background: #@accentColor@;
-      top: -12rem;
-      left: -12rem;
+      top: -10rem;
+      left: -10rem;
     }
 
     body::after {
       background: #@accentColor@;
-      bottom: -22rem;
-      right: -12rem;
+      bottom: -15rem;
+      right: -10rem;
+      animation-delay: -9s;
+    }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(40px, 30px) scale(1.08); }
+      100% { transform: translate(-20px, 50px) scale(0.95); }
     }
 
     .container {
-      max-width: 1350px;
+      max-width: 1380px;
       margin: 0 auto;
       position: relative;
       z-index: 1;
     }
 
+    /* Header Styling */
     header {
       display: flex;
       align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
       gap: 1.25rem;
-      margin-bottom: 3.5rem;
     }
 
     .logo {
-      width: 58px;
-      height: 58px;
-
-      border-radius: 18px;
-
-      background: linear-gradient(145deg,
-          rgba(255, 255, 255, 0.15),
-          rgba(255, 255, 255, 0.03));
-
+      width: 62px;
+      height: 62px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border: 1px solid var(--glass-border);
       display: flex;
       align-items: center;
       justify-content: center;
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
 
-      backdrop-filter: blur(20px);
-      box-shadow: var(--shadow);
+    .logo:hover {
+      transform: rotate(8deg) scale(1.05);
     }
 
     h1 {
       margin: 0;
-
-      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-size: clamp(2rem, 3.5vw, 2.75rem);
       font-weight: 800;
-
-      letter-spacing: -0.04em;
-      color: var(--text);
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      background: linear-gradient(180deg, var(--text) 0%, rgba(255, 255, 255, 0.7) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .subtitle {
-      opacity: 0.85;
-      margin-top: 0.35rem;
-      font-size: 0.95rem;
-      letter-spacing: 0.02em;
+      opacity: 0.65;
+      margin-top: 0.25rem;
+      font-size: 0.925rem;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
+    .status-counter {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 0.15rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* Controls & Filter Bar */
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .search-wrapper {
+      position: relative;
+      width: 260px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.6rem;
+      border-radius: var(--radius-sm);
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--glass-border);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.9rem;
+      backdrop-filter: blur(12px);
+      transition: all 0.25s ease;
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px #@accentColor@33;
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 0.9rem;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    /* Grid Layout */
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
       gap: 1.5rem;
+      perspective: 1000px;
     }
 
+    /* Card Styling */
     .card {
       position: relative;
       padding: 1.5rem;
-      border-radius: var(--radius);
-
-      background:
-        linear-gradient(165deg,
-          rgba(255, 255, 255, 0.09) 0%,
-          rgba(255, 255, 255, 0.02) 100%),
-        var(--card-bg);
-
-      backdrop-filter: blur(22px);
-      -webkit-backdrop-filter: blur(22px);
-
+      border-radius: var(--radius-lg);
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%), var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
       text-decoration: none;
       color: inherit;
       overflow: hidden;
-
-      /* Prevent border pixelation during hover/transforms */
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
-      transform: translateZ(0);
-      background-clip: padding-box;
-
-      transition:
-        transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-        border-color 0.25s ease,
-        box-shadow 0.25s ease;
-
-      box-shadow: var(--shadow);
-
-      min-height: 220px;
-
+      min-height: 210px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+
+      transform-style: preserve-3d;
+      transition:
+        transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+        border-color 0.3s ease,
+        box-shadow 0.35s ease,
+        opacity 0.3s ease;
+
+      box-shadow: var(--shadow-sm);
     }
 
+    /* Mouse Spotlight Border Effect */
     .card::before {
       content: "";
       position: absolute;
-      inset: 0;
+      inset: -1px;
       border-radius: inherit;
-      padding: 2px;
-      background: radial-gradient(400px circle at var(--hover-x, 50%) var(--hover-y, 50%),
+      padding: 1.5px;
+      background: radial-gradient(350px circle at var(--hover-x, 50%) var(--hover-y, 50%),
           var(--hover-border) 0%,
-          rgba(255, 255, 255, 0.2) 40%,
-          transparent 75%);
+          rgba(255, 255, 255, 0.15) 50%,
+          transparent 80%);
       -webkit-mask:
         linear-gradient(#fff 0 0) content-box,
         linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor;
       mask-composite: exclude;
       opacity: 0;
-      transition: opacity 0.2s ease;
+      transition: opacity 0.3s ease;
       pointer-events: none;
     }
 
@@ -205,152 +270,171 @@
     }
 
     .card:hover:not(.disabled) {
-      transform: translateY(-6px) scale(1.015);
-
-      box-shadow:
-        0 20px 35px rgba(0, 0, 0, 0.5),
-        0 0 25px #@accentColor@66;
+      transform: translateY(-8px) rotateX(var(--rotate-x, 0deg)) rotateY(var(--rotate-y, 0deg));
+      box-shadow: var(--shadow-lg);
+      border-color: rgba(255, 255, 255, 0.2);
     }
 
     .card:active:not(.disabled) {
-      transform: scale(0.98);
+      transform: translateY(-2px) scale(0.98);
     }
 
     .card.disabled {
-      opacity: 0.45;
-      filter: grayscale(0.6);
+      opacity: 0.4;
+      filter: grayscale(0.85);
       cursor: not-allowed;
+      border-color: rgba(255, 255, 255, 0.03);
     }
 
+    /* Live Status Badge */
     .status-badge {
       position: absolute;
-
-      top: 16px;
-      right: 16px;
-
-      width: 12px;
-      height: 12px;
-
+      top: 18px;
+      right: 18px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
       border-radius: 999px;
-      background: #6b7280;
-      border: 2px solid rgba(255, 255, 255, 0.15);
-
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.725rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
       z-index: 2;
     }
 
-    .card.online .status-badge {
-      background: #22c55e;
-      box-shadow:
-        0 0 0 4px rgba(34, 197, 94, 0.2),
-        0 0 14px #22c55e;
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #6b7280;
     }
 
-    .card.online .status-badge::after {
-      content: "";
-      position: absolute;
-      inset: -4px;
-      border-radius: inherit;
-      border: 2px solid rgba(34, 197, 94, 0.5);
-      animation: ping 2s infinite;
+    .card.online .status-badge {
+      color: #4ade80;
+      border-color: rgba(74, 222, 128, 0.2);
+      background: rgba(34, 197, 94, 0.1);
+    }
+
+    .card.online .status-dot {
+      background: #22c55e;
+      box-shadow: 0 0 10px #22c55e;
+      animation: pulse-dot 2s ease-in-out infinite;
     }
 
     .card.offline .status-badge {
+      color: #f87171;
+      border-color: rgba(248, 113, 113, 0.2);
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    .card.offline .status-dot {
       background: #ef4444;
     }
 
-    @keyframes ping {
-      from {
-        opacity: 1;
-        transform: scale(0.8);
-      }
-
-      to {
-        opacity: 0;
-        transform: scale(1.8);
-      }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
     }
 
+    /* Icon Container */
     .icon-wrapper {
-      width: 52px;
-      height: 52px;
-      border-radius: 16px;
-
-      background: linear-gradient(145deg,
-          rgba(255, 255, 255, 0.18),
-          rgba(255, 255, 255, 0.04));
-
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       display: flex;
       align-items: center;
       justify-content: center;
-
       backdrop-filter: blur(16px);
-
-      box-shadow:
-        inset 0 1px 1px rgba(255, 255, 255, 0.25),
-        0 6px 14px rgba(0, 0, 0, 0.25);
-
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2), 0 8px 16px rgba(0, 0, 0, 0.2);
       position: relative;
       overflow: hidden;
+      transition: transform 0.3s ease;
     }
 
-    .icon-wrapper::before {
+    .card:hover:not(.disabled) .icon-wrapper {
+      transform: scale(1.08);
+    }
+
+    .icon-wrapper::after {
       content: "";
       position: absolute;
-      top: -40%;
-      left: -20%;
-      width: 140%;
-      height: 70%;
-
-      background: linear-gradient(to bottom,
-          rgba(255, 255, 255, 0.25),
-          transparent);
-
-      transform: rotate(-8deg);
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+      transform: rotate(30deg);
+      transition: opacity 0.3s ease;
     }
 
     .icon {
-      width: 28px;
-      height: 28px;
-
+      width: 30px;
+      height: 30px;
       object-fit: contain;
       position: relative;
       z-index: 1;
-
-      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+      filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
     }
 
+    /* Card Details */
     .card-content {
       display: flex;
       flex-direction: column;
-      gap: 0.35rem;
+      gap: 0.3rem;
     }
 
     h3 {
       margin: 0;
-      font-size: 1.15rem;
+      font-size: 1.2rem;
       font-weight: 700;
-
-      text-transform: capitalize;
       letter-spacing: -0.02em;
+      color: var(--text);
     }
 
     .card-subtitle {
-      font-size: 0.88rem;
+      font-size: 0.85rem;
+      opacity: 0.6;
+      font-family: monospace;
+      letter-spacing: -0.01em;
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 4rem 2rem;
+      background: var(--glass-surface);
+      border: 1px border var(--glass-border);
+      border-radius: var(--radius-lg);
       opacity: 0.7;
     }
 
     @media (max-width: 640px) {
       body {
-        padding: 2rem 1rem;
+        padding: 2rem 1.25rem;
+      }
+
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .search-wrapper {
+        width: 100%;
       }
 
       .grid {
-        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
         gap: 1rem;
       }
 
       .card {
-        min-height: 190px;
+        min-height: 180px;
+        padding: 1.25rem;
       }
     }
   </style>
@@ -359,21 +443,33 @@
 <body>
   <div class="container">
     <header>
-      <div class="logo">
-        <svg width="30" height="30" viewBox="0 0 100 100" shape-rendering="geometricPrecision">
-          <circle cx="50" cy="50" r="45" fill="none" stroke="var(--accent)" stroke-width="5" />
+      <div class="header-brand">
+        <div class="logo">
+          <svg width="32" height="32" viewBox="0 0 100 100" shape-rendering="geometricPrecision">
+            <circle cx="50" cy="50" r="45" fill="none" stroke="var(--accent)" stroke-width="6" />
+            <path d="M50 20 L50 35 M80 50 L65 50 M50 80 L50 65 M20 50 L35 50" stroke="var(--accent)" stroke-width="6"
+              stroke-linecap="round" />
+            <path d="M50 50 L75 30" stroke="var(--text)" stroke-width="8" stroke-linecap="round" />
+          </svg>
+        </div>
 
-          <path d="M50 20 L50 35 M80 50 L65 50 M50 80 L50 65 M20 50 L35 50" stroke="var(--accent)" stroke-width="6"
-            stroke-linecap="round" />
-
-          <path d="M50 50 L75 30" stroke="var(--text)" stroke-width="8" stroke-linecap="round" />
-        </svg>
+        <div>
+          <h1>Dashboard</h1>
+          <div class="subtitle">
+            Self-hosted infrastructure 
+            <span class="status-counter" id="status-counter">0 Active</span>
+          </div>
+        </div>
       </div>
 
-      <div>
-        <h1>Dashnix</h1>
-
-        <div class="subtitle">Self-hosted infrastructure</div>
+      <div class="controls">
+        <div class="search-wrapper">
+          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="search" class="search-input" placeholder="Filter services..." autocomplete="off">
+        </div>
       </div>
     </header>
 
@@ -383,103 +479,118 @@
   <script>
     const services = @servicesJson@;
     const grid = document.getElementById('grid');
+    const statusCounter = document.getElementById('status-counter');
+    const searchInput = document.getElementById('search');
     const host = window.location.hostname;
 
-    // Render initial cards once
-    services.forEach(s => {
-      const url = `http://${host}:${s.port}`;
+    let onlineCount = 0;
 
-      const card = document.createElement('a');
-      card.className = 'card';
-      card.id = `card-${s.name}`;
-      card.href = url;
+    // Render Initial Dynamic Cards
+    function renderCards(filterText = '') {
+      grid.innerHTML = '';
+      const filtered = services.filter(s => 
+        s.name.toLowerCase().includes(filterText.toLowerCase()) || 
+        String(s.port).includes(filterText)
+      );
 
-      card.innerHTML = `
-                <div class="status-badge"></div>
-                <div class="icon-wrapper" id="icon-wrapper-${s.name}">
-                    <img
-                        class="icon"
-                        src="${url}${s.favicon}"
-                        alt="${s.name} favicon"
-                        id="img-${s.name}"
-                    >
-                </div>
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="empty-state">No services matching "${filterText}"</div>`;
+        return;
+      }
 
-                <div class="card-content">
-                    <h3>${s.name}</h3>
+      filtered.forEach(s => {
+        const url = `http://${host}:${s.port}`;
+        const card = document.createElement('a');
+        card.className = 'card';
+        card.id = `card-${s.name}`;
+        card.href = url;
 
-                    <div class="card-subtitle">
-                        localhost:${s.port}
-                    </div>
-                </div>
-            `;
+        card.innerHTML = `
+          <div class="status-badge">
+            <span class="status-dot"></span>
+            <span class="status-text">Checking</span>
+          </div>
 
-      grid.appendChild(card);
+          <div class="icon-wrapper" id="icon-wrapper-${s.name}">
+            <img class="icon" src="${url}${s.favicon}" alt="${s.name} favicon" id="img-${s.name}">
+          </div>
 
-      card.addEventListener('mousemove', e => {
-        const rect = card.getBoundingClientRect();
-        card.style.setProperty('--hover-x', `${e.clientX - rect.left}px`);
-        card.style.setProperty('--hover-y', `${e.clientY - rect.top}px`);
+          <div class="card-content">
+            <h3>${s.name}</h3>
+            <div class="card-subtitle">:${s.port}</div>
+          </div>
+        `;
+
+        grid.appendChild(card);
+
+        // Mouse motion effect (3D tilt & dynamic spotlight)
+        card.addEventListener('mousemove', e => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+          const rotateX = ((y - centerY) / centerY) * -7;
+          const rotateY = ((x - centerX) / centerX) * 7;
+
+          card.style.setProperty('--hover-x', `${x}px`);
+          card.style.setProperty('--hover-y', `${y}px`);
+          card.style.setProperty('--rotate-x', `${rotateX}deg`);
+          card.style.setProperty('--rotate-y', `${rotateY}deg`);
+        });
+
+        card.addEventListener('mouseleave', () => {
+          card.style.setProperty('--rotate-x', '0deg');
+          card.style.setProperty('--rotate-y', '0deg');
+        });
       });
-    });
 
-    function checkServiceStatus(s) {
+      // Poll status for rendered elements
+      pollAllServices();
+    }
+
+    async function checkServiceStatus(s) {
       const url = `http://${host}:${s.port}`;
       const card = document.getElementById(`card-${s.name}`);
-      const wrapper = document.getElementById(`icon-wrapper-${s.name}`);
+      if (!card) return;
 
-      const pingImg = new Image();
-      const timestamp = Date.now(); // Avoid browser image caching
-      pingImg.src = `${url}${s.favicon}?_=${timestamp}`;
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 2000); // 2-second fast timeout
 
-      pingImg.onload = () => {
-        // Service is Online -> Restore card
+      try {
+        // Mode 'no-cors' allows pinging local HTTP ports without throwing CORS errors
+        await fetch(`${url}${s.favicon}?_=${Date.now()}`, { 
+          mode: 'no-cors', 
+          signal: controller.signal 
+        });
+        clearTimeout(timeoutId);
+        
+        // Service is Online
         card.classList.remove('disabled', 'offline');
         card.classList.add('online');
-        card.onclick = null; // Re-enable click navigation
-
-        wrapper.innerHTML = `
-                    <img
-                        class="icon"
-                        src="${url}${s.favicon}"
-                        alt="${s.name} favicon"
-                    >
-                `;
-      };
-
-      pingImg.onerror = () => {
-        // Service is Offline -> Disable card
+      } catch (err) {
+        // Service is Offline or Timed Out
         card.classList.remove('online');
         card.classList.add('disabled', 'offline');
-        card.onclick = (e) => e.preventDefault();
+      }
+    }
 
-        wrapper.innerHTML = `
-                    <svg
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        opacity="0.7"
-                    >
-                        <path d="M18 6L6 18"/>
-                        <path d="M6 6l12 12"/>
-                    </svg>
-                `;
-      };
+    function updateCounter() {
+      statusCounter.textContent = `${onlineCount} / ${services.length} Online`;
     }
 
     function pollAllServices() {
       services.forEach(checkServiceStatus);
     }
 
-    // Initial check
-    pollAllServices();
+    // Search filter event
+    searchInput.addEventListener('input', (e) => {
+      renderCards(e.target.value);
+    });
 
-    // Poll every 10 seconds
+    // Init
+    renderCards();
     setInterval(pollAllServices, 10000);
   </script>
 </body>

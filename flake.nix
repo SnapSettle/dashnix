@@ -26,6 +26,6 @@
         }).config.build.wrapper
       );
 
-      nixosModules.default = import ./dashnix.nix;
+      nixosModules.default = import ./dashboard.nix;
     };
 }

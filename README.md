@@ -1,11 +1,11 @@
-# 🚀 Dashnix
+# 🚀 Dashboard
 
 > [!NOTE]
 > This project is a part of [SnapCore](https://github.com/SnapSettle/snapcore)!
 
-**Dashnix** is a lightweight, NixOS-native service dashboard. It automatically scans your system configuration to discover enabled services and their assigned ports, presenting them in a clean, modern web interface.
+**Dashboard** is a lightweight, NixOS-native service dashboard. It automatically scans your system configuration to discover enabled services and their assigned ports, presenting them in a clean, modern web interface.
 
-No more manual bookmarking or hardcoding links—if it's enabled in your NixOS config, Dashnix finds it.
+No more manual bookmarking or hardcoding links—if it's enabled in your NixOS config, Dashboard finds it.
 
 ---
 
@@ -23,19 +23,19 @@ No more manual bookmarking or hardcoding links—if it's enabled in your NixOS c
 
 ### Option A: Using Flakes (Recommended)
 
-Add Dashnix to your `flake.nix` as a source input:
+Add Dashboard to your `flake.nix` as a source input:
 
 ```nix
 inputs = {
-  dashnix-src = {
-    url = "github:your-username/dashnix";
+  Dashboard-src = {
+    url = "github:your-username/Dashboard";
     flake = false;
   };
 };
 
 # In your outputs:
 modules = [
-  "${inputs.dashnix-src}/dashnix.nix"
+  "${inputs.Dashboard-src}/Dashboard.nix"
 ];
 ```
 
@@ -43,15 +43,15 @@ OR
 
 ```nix
 {
-  inputs.dashnix.url = "github:snapsettle/dashnix";
+  inputs.Dashboard.url = "github:snapsettle/Dashboard";
 
-  outputs = { self, nixpkgs, dashnix, ... }@inputs: {
+  outputs = { self, nixpkgs, Dashboard, ... }@inputs: {
     nixosConfigurations.my-machine = nixpkgs.lib.nixosSystem {
       specialArgs = { inherit inputs; };
       modules = [
-        dashnix.nixosModules.default
+        Dashboard.nixosModules.default
         ({ ... }: {
-          services.dashnix = {
+          services.Dashboard = {
             enable = true;
             openFirewall = true; # Optional: opens the dashboard port
             watchedServices = [ "jellyfin" "sonarr" "radarr" "bazarr" "qbittorrent" ];
@@ -73,8 +73,8 @@ You can import the module directly from GitHub using `fetchTarball` in your `con
 {
   imports = [
     (builtins.fetchTarball {
-      url = "https://github.com/your-username/dashnix/archive/master.tar.gz";
-    } + "/dashnix.nix")
+      url = "https://github.com/your-username/Dashboard/archive/master.tar.gz";
+    } + "/Dashboard.nix")
   ];
 }
 ```
@@ -86,7 +86,7 @@ You can import the module directly from GitHub using `fetchTarball` in your `con
 Configure the dashboard directly in your NixOS configuration files:
 
 ```nix
-services.dashnix = {
+services.Dashboard = {
   enable = true;
   port = 8081;             # Access the dash at http://your-ip:8081
   openFirewall = true;     # Automatically open the port in the firewall
@@ -111,7 +111,7 @@ services.dashnix = {
 
 ### 1. The Scavenger Logic
 
-NixOS modules often store ports in different places. Dashnix intelligently probes the following paths for every service in your `watchedServices` list:
+NixOS modules often store ports in different places. Dashboard intelligently probes the following paths for every service in your `watchedServices` list:
 
 - Standard: `services.<name>.port`
 - Submodules: `services.<name>.settings.port`
@@ -120,7 +120,7 @@ NixOS modules often store ports in different places. Dashnix intelligently probe
 
 ### 2. Static Site Generation
 
-Dashnix uses `pkgs.writeText` to generate a static HTML/JavaScript dashboard at build time. This means the dashboard itself is incredibly fast and has zero runtime dependencies other than Nginx.
+Dashboard uses `pkgs.writeText` to generate a static HTML/JavaScript dashboard at build time. This means the dashboard itself is incredibly fast and has zero runtime dependencies other than Nginx.
 
 ### 3. Client-Side Asset Discovery
 
@@ -130,7 +130,7 @@ Because some apps return a 404 or a redirect when hitting `/favicon.ico`, the da
 
 ## 🛠 Advanced Usage
 
-If you have a service that uses a non-standard NixOS module where the port is not exposed to the options tree, simply define the port explicitly in your config, and Dashnix will pick it up:
+If you have a service that uses a non-standard NixOS module where the port is not exposed to the options tree, simply define the port explicitly in your config, and Dashboard will pick it up:
 
 ```nix
 # Example: If a module uses an 'extraConfig' string instead of a port option
