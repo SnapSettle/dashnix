@@ -27,15 +27,15 @@ Add Dashboard to your `flake.nix` as a source input:
 
 ```nix
 inputs = {
-  Dashboard-src = {
-    url = "github:your-username/Dashboard";
+  dashboard-src = {
+    url = "github:snapsettle/dashboard";
     flake = false;
   };
 };
 
 # In your outputs:
 modules = [
-  "${inputs.Dashboard-src}/Dashboard.nix"
+  "${inputs.dashboard-src}/dashboard.nix"
 ];
 ```
 
@@ -43,15 +43,15 @@ OR
 
 ```nix
 {
-  inputs.Dashboard.url = "github:snapsettle/Dashboard";
+  inputs.Dashboard.url = "github:snapsettle/dashboard";
 
-  outputs = { self, nixpkgs, Dashboard, ... }@inputs: {
+  outputs = { self, nixpkgs, dashboard, ... }@inputs: {
     nixosConfigurations.my-machine = nixpkgs.lib.nixosSystem {
       specialArgs = { inherit inputs; };
       modules = [
-        Dashboard.nixosModules.default
+        dashboard.nixosModules.default
         ({ ... }: {
-          services.Dashboard = {
+          services.dashboard = {
             enable = true;
             openFirewall = true; # Optional: opens the dashboard port
             watchedServices = [ "jellyfin" "sonarr" "radarr" "bazarr" "qbittorrent" ];
@@ -86,7 +86,7 @@ You can import the module directly from GitHub using `fetchTarball` in your `con
 Configure the dashboard directly in your NixOS configuration files:
 
 ```nix
-services.Dashboard = {
+services.dashboard = {
   enable = true;
   port = 8081;             # Access the dash at http://your-ip:8081
   openFirewall = true;     # Automatically open the port in the firewall
