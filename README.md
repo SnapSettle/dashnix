@@ -43,7 +43,7 @@ OR
 
 ```nix
 {
-  inputs.Dashboard.url = "github:snapsettle/dashboard";
+  inputs.dashboard.url = "github:snapsettle/dashboard";
 
   outputs = { self, nixpkgs, dashboard, ... }@inputs: {
     nixosConfigurations.my-machine = nixpkgs.lib.nixosSystem {
