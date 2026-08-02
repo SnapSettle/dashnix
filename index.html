@@ -477,122 +477,177 @@
   </div>
 
   <script>
-    const services = @servicesJson@;
-    const grid = document.getElementById('grid');
-    const statusCounter = document.getElementById('status-counter');
-    const searchInput = document.getElementById('search');
-    const host = window.location.hostname;
+  const services = @servicesJson@;
+  const grid = document.getElementById('grid');
+  const statusCounter = document.getElementById('status-counter');
+  const searchInput = document.getElementById('search');
+  const host = window.location.hostname;
 
-    let onlineCount = 0;
+  const onlineStatuses = new Map();
 
-    // Render Initial Dynamic Cards
-    function renderCards(filterText = '') {
-      grid.innerHTML = '';
-      const filtered = services.filter(s => 
-        s.name.toLowerCase().includes(filterText.toLowerCase()) || 
-        String(s.port).includes(filterText)
-      );
+  function renderCards(filterText = '') {
+    grid.innerHTML = '';
+    const filtered = services.filter(s => 
+      s.name.toLowerCase().includes(filterText.toLowerCase()) || 
+      String(s.port).includes(filterText)
+    );
 
-      if (filtered.length === 0) {
-        grid.innerHTML = `<div class="empty-state">No services matching "${filterText}"</div>`;
-        return;
+    if (filtered.length === 0) {
+      grid.innerHTML = `<div class="empty-state">No services matching "${filterText}"</div>`;
+      return;
+    }
+
+    filtered.forEach(s => {
+      const url = `http://${host}:${s.port}`;
+      const card = document.createElement('a');
+      card.className = 'card';
+      card.id = `card-${s.name}`;
+      card.href = url;
+
+      // Retain previously checked status so UI stays smooth during re-renders/searches
+      const knownStatus = onlineStatuses.get(s.name);
+      let statusClass = '';
+      let statusLabel = 'Checking';
+
+      if (knownStatus === true) {
+        statusClass = 'online';
+        statusLabel = 'Online';
+      } else if (knownStatus === false) {
+        statusClass = 'disabled offline';
+        statusLabel = 'Offline';
       }
 
-      filtered.forEach(s => {
-        const url = `http://${host}:${s.port}`;
-        const card = document.createElement('a');
-        card.className = 'card';
-        card.id = `card-${s.name}`;
-        card.href = url;
+      card.className = `card ${statusClass}`.trim();
 
-        card.innerHTML = `
-          <div class="status-badge">
-            <span class="status-dot"></span>
-            <span class="status-text">Checking</span>
-          </div>
+      card.innerHTML = `
+        <div class="status-badge">
+          <span class="status-dot"></span>
+          <span class="status-text">${statusLabel}</span>
+        </div>
 
-          <div class="icon-wrapper" id="icon-wrapper-${s.name}">
-            <img class="icon" src="${url}${s.favicon}" alt="${s.name} favicon" id="img-${s.name}">
-          </div>
+        <div class="icon-wrapper" id="icon-wrapper-${s.name}">
+          <img class="icon" src="${url}${s.favicon}" alt="${s.name} favicon" id="img-${s.name}">
+        </div>
 
-          <div class="card-content">
-            <h3>${s.name}</h3>
-            <div class="card-subtitle">:${s.port}</div>
-          </div>
-        `;
+        <div class="card-content">
+          <h3>${s.name}</h3>
+          <div class="card-subtitle">${host}:${s.port}</div>
+        </div>
+      `;
 
-        grid.appendChild(card);
+      grid.appendChild(card);
 
-        // Mouse motion effect (3D tilt & dynamic spotlight)
-        card.addEventListener('mousemove', e => {
-          const rect = card.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
+      // Mouse motion effect
+      card.addEventListener('mousemove', e => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
 
-          const centerX = rect.width / 2;
-          const centerY = rect.height / 2;
-          const rotateX = ((y - centerY) / centerY) * -7;
-          const rotateY = ((x - centerX) / centerX) * 7;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = ((y - centerY) / centerY) * -7;
+        const rotateY = ((x - centerX) / centerX) * 7;
 
-          card.style.setProperty('--hover-x', `${x}px`);
-          card.style.setProperty('--hover-y', `${y}px`);
-          card.style.setProperty('--rotate-x', `${rotateX}deg`);
-          card.style.setProperty('--rotate-y', `${rotateY}deg`);
-        });
-
-        card.addEventListener('mouseleave', () => {
-          card.style.setProperty('--rotate-x', '0deg');
-          card.style.setProperty('--rotate-y', '0deg');
-        });
+        card.style.setProperty('--hover-x', `${x}px`);
+        card.style.setProperty('--hover-y', `${y}px`);
+        card.style.setProperty('--rotate-x', `${rotateX}deg`);
+        card.style.setProperty('--rotate-y', `${rotateY}deg`);
       });
 
-      // Poll status for rendered elements
-      pollAllServices();
-    }
-
-    async function checkServiceStatus(s) {
-      const url = `http://${host}:${s.port}`;
-      const card = document.getElementById(`card-${s.name}`);
-      if (!card) return;
-
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 2000); // 2-second fast timeout
-
-      try {
-        // Mode 'no-cors' allows pinging local HTTP ports without throwing CORS errors
-        await fetch(`${url}${s.favicon}?_=${Date.now()}`, { 
-          mode: 'no-cors', 
-          signal: controller.signal 
-        });
-        clearTimeout(timeoutId);
-        
-        // Service is Online
-        card.classList.remove('disabled', 'offline');
-        card.classList.add('online');
-      } catch (err) {
-        // Service is Offline or Timed Out
-        card.classList.remove('online');
-        card.classList.add('disabled', 'offline');
-      }
-    }
-
-    function updateCounter() {
-      statusCounter.textContent = `${onlineCount} / ${services.length} Online`;
-    }
-
-    function pollAllServices() {
-      services.forEach(checkServiceStatus);
-    }
-
-    // Search filter event
-    searchInput.addEventListener('input', (e) => {
-      renderCards(e.target.value);
+      card.addEventListener('mouseleave', () => {
+        card.style.setProperty('--rotate-x', '0deg');
+        card.style.setProperty('--rotate-y', '0deg');
+      });
     });
+  }
 
-    // Init
-    renderCards();
-    setInterval(pollAllServices, 10000);
-  </script>
+  // Non-blocking ping check per service
+  function checkServiceStatus(s) {
+    return new Promise((resolve) => {
+      const url = `http://${host}:${s.port}`;
+      const img = new Image();
+      let handled = false;
+
+      const timeoutId = setTimeout(() => {
+        if (!handled) {
+          handled = true;
+          updateCardUI(s.name, false);
+          resolve(false);
+        }
+      }, 2500);
+
+      img.onload = () => {
+        if (handled) return;
+        handled = true;
+        clearTimeout(timeoutId);
+        updateCardUI(s.name, true);
+        resolve(true);
+      };
+
+      img.onerror = () => {
+        if (handled) return;
+        handled = true;
+        clearTimeout(timeoutId);
+
+        // Fallback fetch check
+        fetch(`${url}/`, { mode: 'no-cors', cache: 'no-cache' })
+          .then(() => {
+            updateCardUI(s.name, true);
+            resolve(true);
+          })
+          .catch(() => {
+            updateCardUI(s.name, false);
+            resolve(false);
+          });
+      };
+
+      img.src = `${url}${s.favicon}?_=${Date.now()}`;
+    });
+  }
+
+  function updateCardUI(serviceName, isOnline) {
+    onlineStatuses.set(serviceName, isOnline);
+    const card = document.getElementById(`card-${serviceName}`);
+    if (!card) return;
+
+    const statusText = card.querySelector('.status-text');
+
+    if (isOnline) {
+      card.classList.remove('disabled', 'offline');
+      card.classList.add('online');
+      if (statusText) statusText.textContent = 'Online';
+    } else {
+      card.classList.remove('online');
+      card.classList.add('disabled', 'offline');
+      if (statusText) statusText.textContent = 'Offline';
+    }
+
+    updateCounter();
+  }
+
+  function updateCounter() {
+    let onlineCount = 0;
+    onlineStatuses.forEach((isOnline) => {
+      if (isOnline) onlineCount++;
+    });
+    statusCounter.textContent = `${onlineCount} / ${services.length} Online`;
+  }
+
+  // Polls concurrently without blocking UI main-thread or layout rendering
+  function pollAllServices() {
+    services.forEach(checkServiceStatus);
+  }
+
+  // Search filter event
+  searchInput.addEventListener('input', (e) => {
+    renderCards(e.target.value);
+  });
+
+  // Init
+  renderCards();
+  pollAllServices();
+  setInterval(pollAllServices, 10000);
+</script>
 </body>
 
 </html>

@@ -8,7 +8,7 @@
 with lib;
 
 let
-  cfg = config.services.dashnix;
+  cfg = config.services.dashboard;
 
   accentColor = config.lib.stylix.colors.base0D or "38bdf8";
   bgColor = config.lib.stylix.colors.base00 or "0f172a";
@@ -114,8 +114,8 @@ let
 
 in
 {
-  options.services.dashnix = {
-    enable = mkEnableOption "Dashnix dashboard";
+  options.services.dashboard = {
+    enable = mkEnableOption "Enable Dashboard";
 
     port = mkOption {
       type = types.port;
@@ -143,14 +143,14 @@ in
     networking.firewall.allowedTCPPorts = mkIf cfg.openFirewall [ cfg.port ];
     services.nginx = {
       enable = true;
-      virtualHosts."dashnix.local" = {
+      virtualHosts."dashboard.local" = {
         listen = [
           {
             addr = "0.0.0.0";
             port = cfg.port;
           }
         ];
-        root = "${pkgs.runCommand "dashnix-root" { } "mkdir $out; cp ${indexHtml} $out/index.html"}";
+        root = "${pkgs.runCommand "dashboard-root" { } "mkdir $out; cp ${indexHtml} $out/index.html"}";
       };
     };
   };
