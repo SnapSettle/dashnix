@@ -503,7 +503,13 @@
   </div>
 
   <script>
-  const services = @servicesJson@;
+  let rawServices = null;
+  try {
+    rawServices = @servicesJson@;
+  } catch (e) {
+    console.error("Failed to parse services JSON:", e);
+  }
+  const services = Array.isArray(rawServices) ? rawServices : [];
   const grid = document.getElementById('grid');
   const statusCounter = document.getElementById('status-counter');
   const searchInput = document.getElementById('search');
@@ -519,7 +525,11 @@
     );
 
     if (filtered.length === 0) {
-      grid.innerHTML = `<div class="empty-state">No services matching "${filterText}"</div>`;
+      const message = services.length === 0 
+        ? "No services configured yet." 
+        : `No services matching "${filterText}"`;
+
+      grid.innerHTML = `<div class="empty-state">${message}</div>`;
       return;
     }
 
