@@ -40,6 +40,44 @@
       --border-subtle: rgba(255, 255, 255, 0.1);
     }
 
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+
+      /* Completely stop heavy ambient background light animations */
+      body::before,
+      body::after {
+        animation: none !important;
+        filter: none !important;
+        opacity: 0.1 !important;
+      }
+
+      /* Disable 3D tilt transformations and spotlight borders on cards */
+      .card {
+        transform: none !important;
+        transition: none !important;
+      }
+
+      .card::before {
+        display: none !important;
+      }
+
+      .logo {
+        transition: none !important;
+      }
+
+      /* Stop pulsing live status dots */
+      .card.online .status-dot {
+        animation: none !important;
+      }
+    }
+
     /* Light mode adjustments */
     @media (prefers-color-scheme: light) {
       :root {
