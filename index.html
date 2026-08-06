@@ -33,8 +33,6 @@
 
       --heading-gradient: linear-gradient(180deg, var(--text) 0%, rgba(255, 255, 255, 0.7) 100%);
       --bg-overlay: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.6) 100%);
-      --search-bg: rgba(0, 0, 0, 0.25);
-      --search-bg-focus: rgba(0, 0, 0, 0.4);
       --badge-bg: rgba(0, 0, 0, 0.3);
       --counter-bg: rgba(255, 255, 255, 0.08);
       --border-subtle: rgba(255, 255, 255, 0.1);
@@ -88,8 +86,6 @@
         --shadow-lg: 0 20px 30px -10px rgba(0, 0, 0, 0.1), 0 0 25px #@accentColor@35;
         --heading-gradient: linear-gradient(180deg, #0f172a 0%, #334155 100%);
         --bg-overlay: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.6) 0%, rgba(241, 245, 249, 0.9) 100%);
-        --search-bg: rgba(255, 255, 255, 0.8);
-        --search-bg-focus: rgba(255, 255, 255, 1);
         --badge-bg: rgba(255, 255, 255, 0.85);
         --counter-bg: rgba(0, 0, 0, 0.05);
         --border-subtle: rgba(0, 0, 0, 0.08);
@@ -230,51 +226,6 @@
       border-radius: 999px;
       font-size: 0.8rem;
       border: 1px solid var(--glass-border);
-    }
-
-    /* Controls & Filter Bar */
-    .controls {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .search-wrapper {
-      position: relative;
-      width: 260px;
-    }
-
-    .search-input {
-      width: 100%;
-      padding: 0.75rem 1rem 0.75rem 2.6rem;
-      border-radius: var(--radius-sm);
-      background: var(--search-bg);
-      border: 1px solid var(--glass-border);
-      color: var(--text);
-      font-family: inherit;
-      font-size: 0.9rem;
-      backdrop-filter: blur(12px);
-      transition: all 0.25s ease;
-      outline: none;
-    }
-
-    .search-input:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px #@accentColor@33;
-      background: var(--search-bg-focus);
-    }
-
-    .search-icon {
-      position: absolute;
-      left: 0.9rem;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 16px;
-      height: 16px;
-      display: block;
-      flex-shrink: 0;
-      opacity: 0.5;
-      pointer-events: none;
     }
 
     /* Grid Layout */
@@ -491,10 +442,6 @@
         align-items: flex-start;
       }
 
-      .search-wrapper {
-        width: 100%;
-      }
-
       .grid {
         grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
         gap: 1rem;
@@ -529,16 +476,6 @@
           </div>
         </div>
       </div>
-
-      <div class="controls">
-        <div class="search-wrapper">
-          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-          <input type="text" id="search" class="search-input" placeholder="Filter services..." autocomplete="off">
-        </div>
-      </div>
     </header>
 
     <div id="grid" class="grid"></div>
@@ -554,37 +491,27 @@
   const services = Array.isArray(rawServices) ? rawServices : [];
   const grid = document.getElementById('grid');
   const statusCounter = document.getElementById('status-counter');
-  const searchInput = document.getElementById('search');
   const host = window.location.hostname;
 
   const onlineStatuses = new Map();
 
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  function renderCards(filterText = '') {
+  function renderCards() {
     grid.innerHTML = '';
-    const filtered = services.filter(s => 
-      s.name.toLowerCase().includes(filterText.toLowerCase()) || 
-      String(s.port).includes(filterText)
-    );
-
-    if (filtered.length === 0) {
-      const message = services.length === 0 
-        ? "No services configured yet." 
-        : `No services matching "${filterText}"`;
-
-      grid.innerHTML = `<div class="empty-state">${message}</div>`;
+    
+    if (!services || services.length === 0) {
+      grid.innerHTML = `<div class="empty-state">No services available</div>`;
       return;
     }
 
-    filtered.forEach(s => {
+    services.forEach(s => {
       const url = `http://${host}:${s.port}`;
       const card = document.createElement('a');
       card.className = 'card';
       card.id = `card-${s.name}`;
       card.href = url;
 
-      // Retain previously checked status so UI stays smooth during re-renders/searches
       const knownStatus = onlineStatuses.get(s.name);
       let statusClass = '';
       let statusLabel = 'Checking';
@@ -720,11 +647,6 @@
   function pollAllServices() {
     services.forEach(checkServiceStatus);
   }
-
-  // Search filter event
-  searchInput.addEventListener('input', (e) => {
-    renderCards(e.target.value);
-  });
 
   // Init
   renderCards();
