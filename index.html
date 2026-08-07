@@ -510,6 +510,7 @@
       card.className = 'card';
       card.id = `card-${s.name}`;
       card.href = url;
+      card.rel = 'noreferrer';
 
       const knownStatus = onlineStatuses.get(s.name);
       let statusClass = '';
